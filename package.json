@@ -41,13 +41,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/evgenusov/react-native-proximity-sensor",
+  "repository": "https://github.com/Lowkeychat/react-native-proximity-sensor",
   "author": "Evgeny <evgenusov96@gmail.com> (https://github.com/evgenusov)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/evgenusov/react-native-proximity-sensor/issues"
+    "url": "https://github.com/Lowkeychat/react-native-proximity-sensor/issues"
   },
-  "homepage": "https://github.com/evgenusov/react-native-proximity-sensor#readme",
+  "homepage": "https://github.com/Lowkeychat/react-native-proximity-sensor#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

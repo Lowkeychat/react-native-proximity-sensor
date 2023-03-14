@@ -1,17 +1,21 @@
 # react-native-proximity-sensor
 
-Library for React Native to work with proximity-sensor
+Library for React Native to work with proximity-sensor. 
 
 ## Installation
 
 ```sh
 npm install react-native-proximity-sensor
+
+cd ios && pod install
 ```
 
 or
 
 ```sh
 yarn add react-native-proximity-sensor
+
+cd ios && pod install
 ```
 
 
@@ -72,6 +76,22 @@ Android required some additional steps to work with Proximity sensor. Just add p
 
 ```
 
+# New architecture 
+
+## ios
+
+Install pods with right flag:
+
+```sh
+RCT_NEW_ARCH_ENABLED=1 pod install
+```
+
+## android
+
+Add to `android/gradle.properties`:
+```gradle
+newArchEnabled=true
+```
 
 
 ## License
