@@ -20,9 +20,9 @@ class ProximitySensorPackage : TurboReactPackage() {
     return ReactModuleInfoProvider {
       val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
       val isTurboModule: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-      moduleInfos[ProximitySensorModule.NAME] = ReactModuleInfo(
-        ProximitySensorModule.NAME,
-        ProximitySensorModule.NAME,
+      moduleInfos[ProximitySensorImpl.NAME] = ReactModuleInfo(
+        ProximitySensorImpl.NAME,
+        ProximitySensorImpl.NAME,
         false,  // canOverrideExistingModule
         false,  // needsEagerInit
         true,  // hasConstants
