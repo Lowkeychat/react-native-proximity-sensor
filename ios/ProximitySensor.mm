@@ -4,6 +4,7 @@
 @implementation ProximitySensor
 {
   bool hasListeners;
+  bool currentState;
 }
 RCT_EXPORT_MODULE(ProximitySensor)
 
@@ -36,19 +37,33 @@ RCT_REMAP_METHOD(stop,
 {
     if (hasListeners) {// Only send events if anyone is listening
         BOOL isNear = [[UIDevice currentDevice] proximityState];
-        NSMutableDictionary* body = [[NSMutableDictionary alloc] init];
-        
-        body[@"isNear"] = @(isNear);
-        
-        [self sendEventWithName:@"Proximity" body: body];
+        if(currentState != isNear) {
+            NSMutableDictionary* body = [[NSMutableDictionary alloc] init];
+            currentState = isNear;
+            body[@"isNear"] = @(isNear);
+            
+            [self sendEventWithName:@"Proximity" body: body];
+        }
     }
 }
 
 - (void)stop:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
     dispatch_async(dispatch_get_main_queue(), ^{
         [UIDevice.currentDevice setProximityMonitoringEnabled:NO];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
         resolve(nil);
     });
+    
+    
+    if(hasListeners  && currentState != NO) {
+        NSMutableDictionary* body = [[NSMutableDictionary alloc] init];
+        body[@"isNear"] = @(NO);
+        
+        currentState = NO;
+        
+        
+        [self sendEventWithName:@"Proximity" body: body];
+    }
 }
 
 - (void)start:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
