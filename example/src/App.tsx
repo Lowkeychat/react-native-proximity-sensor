@@ -1,18 +1,35 @@
-import * as React from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-proximity-sensor';
+import { ProximitySensor } from 'react-native-proximity-sensor';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const [enabled, setEnabled] = React.useState(false);
 
-  React.useEffect(() => {
-    multiply(3, 7).then(setResult);
+  useEffect(() => {
+    const subscription = ProximitySensor.onChangeListener((isNear) => {
+      console.warn('isNear: ', isNear);
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
+
+  const toggle = useCallback(() => {
+    if (enabled) {
+      ProximitySensor.stop();
+    } else {
+      ProximitySensor.start();
+    }
+    setEnabled(!enabled);
+  }, [enabled]);
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Text>Enabled: {enabled.toString()}</Text>
+      <View style={styles.box} />
+      <Text onPress={toggle}>Toggle</Text>
     </View>
   );
 }

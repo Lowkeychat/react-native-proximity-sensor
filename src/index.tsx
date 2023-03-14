@@ -1,4 +1,9 @@
-import { NativeModules, Platform } from 'react-native';
+import {
+  NativeModules,
+  Platform,
+  NativeEventEmitter,
+  EmitterSubscription,
+} from 'react-native';
 
 const LINKING_ERROR =
   `The package 'react-native-proximity-sensor' doesn't seem to be linked. Make sure: \n\n` +
@@ -13,7 +18,7 @@ const ProximitySensorModule = isTurboModuleEnabled
   ? require('./NativeProximitySensor').default
   : NativeModules.ProximitySensor;
 
-const ProximitySensor = ProximitySensorModule
+const ProximitySensorCls = ProximitySensorModule
   ? ProximitySensorModule
   : new Proxy(
       {},
@@ -24,6 +29,16 @@ const ProximitySensor = ProximitySensorModule
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return ProximitySensor.multiply(a, b);
-}
+const eventEmitter = new NativeEventEmitter(ProximitySensorModule);
+
+export const ProximitySensor = {
+  start: ProximitySensorCls.start,
+  stop: ProximitySensorCls.stop,
+  onChangeListener: (
+    onChangeCallback: (isNear: boolean) => void
+  ): EmitterSubscription => {
+    return eventEmitter.addListener('Proximity', (e) => {
+      onChangeCallback(e.isNear);
+    });
+  },
+};

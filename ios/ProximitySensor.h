@@ -1,12 +1,14 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import "RNProximitySensorSpec.h"
+#import <React/RCTEventEmitter.h>
 
-@interface ProximitySensor : NSObject <NativeProximitySensorSpec>
+@interface ProximitySensor : RCTEventEmitter <NativeProximitySensorSpec>
 #else
 #import <React/RCTBridgeModule.h>
+#import <React/RCTEventEmitter.h>
 
-@interface ProximitySensor : NSObject <RCTBridgeModule>
+@interface ProximitySensor : RCTEventEmitter <RCTBridgeModule>
 #endif
 
 @end

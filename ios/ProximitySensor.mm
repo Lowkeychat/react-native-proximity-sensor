@@ -1,18 +1,68 @@
 #import "ProximitySensor.h"
 
+
 @implementation ProximitySensor
-RCT_EXPORT_MODULE()
-
-// Example method
-// See // https://reactnative.dev/docs/native-modules-ios
-RCT_REMAP_METHOD(multiply,
-                 multiplyWithA:(double)a withB:(double)b
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
 {
-    NSNumber *result = @(a * b);
+  bool hasListeners;
+}
+RCT_EXPORT_MODULE(ProximitySensor)
 
-    resolve(result);
+
+-(void)startObserving {
+    hasListeners = YES;
+}
+
+-(void)stopObserving {
+    hasListeners = NO;
+}
+
+
+RCT_REMAP_METHOD(start,
+                 withResolverStart:(RCTPromiseResolveBlock)resolve
+                 withRejecterStart:(RCTPromiseRejectBlock)reject)
+{
+    [self start:resolve reject:reject];
+}
+
+RCT_REMAP_METHOD(stop,
+                 withResolverStop:(RCTPromiseResolveBlock)resolve
+                 withRejecterStop:(RCTPromiseRejectBlock)reject)
+{
+    [self stop:resolve reject:reject];
+}
+
+
+- (void)sensorStateMonitor:(NSNotificationCenter *)notification
+{
+    if (hasListeners) {// Only send events if anyone is listening
+        BOOL isNear = [[UIDevice currentDevice] proximityState];
+        NSMutableDictionary* body = [[NSMutableDictionary alloc] init];
+        
+        body[@"isNear"] = @(isNear);
+        
+        [self sendEventWithName:@"Proximity" body: body];
+    }
+}
+
+- (void)stop:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIDevice.currentDevice setProximityMonitoringEnabled:NO];
+        resolve(nil);
+    });
+}
+
+- (void)start:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sensorStateMonitor:) name:@"UIDeviceProximityStateDidChangeNotification" object:nil];
+        resolve(nil);
+    });
+}
+
+
+- (NSArray<NSString *> *) supportedEvents {
+    return @[@"Proximity"];
+
 }
 
 // Don't compile this code when we build for the old architecture.
@@ -23,5 +73,8 @@ RCT_REMAP_METHOD(multiply,
     return std::make_shared<facebook::react::NativeProximitySensorSpecJSI>(params);
 }
 #endif
+
+
+
 
 @end
